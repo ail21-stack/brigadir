@@ -1,65 +1,69 @@
-<!DOCTYPE html>
-
+            <!doctype html>
 <html lang="ru">
-
 <head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101923">
 <title>Бригадир</title>
-
 <style>
-
-body{background:#101923;color:white;font-family:Arial;padding:20px}
-
-button{background:#f3b44d;border:0;border-radius:10px;padding:15px;margin:5px;font-size:16px}
-
-section{background:#1d2b3a;padding:20px;border-radius:12px;margin-top:20px}
-
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#0e151e;color:#edf2f7;font:15px -apple-system,Arial,sans-serif}header{background:#101923;padding:19px 15px;border-bottom:1px solid #334151}h1{margin:0;font-size:24px}small,.muted{color:#a8b7c8}nav{display:flex;gap:5px;overflow:auto;padding:9px;background:#101923;position:sticky;top:0}button{background:#293a4c;border:1px solid #405164;color:#fff;padding:10px 12px;border-radius:9px;font:inherit}nav button{font-size:13px;padding:9px}button.sel,.gold{background:#f4b54e;color:#17202b;font-weight:700;border:0}.red{background:#633036}button:disabled{opacity:.45}main{padding:12px;max-width:730px;margin:auto}.card{background:#192534;border:1px solid #344456;border-radius:14px;margin:0 0 12px;padding:14px}h2{font-size:18px;margin:0 0 12px}h3{font-size:15px;margin:12px 0 7px}input,textarea,select{display:block;width:100%;padding:12px;background:#0d1722;border:1px solid #47596e;border-radius:9px;color:white;font:inherit;margin:7px 0}label{display:block;margin:10px 0}.check{display:flex;gap:8px;align-items:center}.check input{width:auto;margin:0}section[hidden]{display:none}article{border-top:1px solid #415062;padding:12px 0}.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.between{justify-content:space-between}.tag{border-radius:12px;padding:3px 8px;background:#314254;font-size:12px}.ok{color:#76e0b8}.clock{font-weight:700;color:#f4b54e}.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.stat{padding:10px;background:#273649;border-radius:8px}.stat strong{display:block;font-size:20px}table{width:100%;border-collapse:collapse;font-size:13px}td,th{padding:8px 4px;border-bottom:1px solid #344456;text-align:left}td:last-child,th:last-child{text-align:right}.actions{display:flex;gap:6px;flex-wrap:wrap}.actions button{font-size:13px;padding:8px}p{line-height:1.45}.note{font-size:12px;color:#adc0d0}.hide{display:none}
 </style>
-
 </head>
-
 <body>
-
-<h1>БРИГАДИР 2.0</h1>
-
-<p>Проверка приложения</p>
-
-<button onclick="show('shift')">Смена</button>
-
-<button onclick="show('team')">Бригада</button>
-
+<header><h1>БРИГАДИР</h1><small>Учёт производственной смены</small></header>
+<nav id="nav"><button class="sel" data-tab="shift">Смена</button><button data-tab="jobs">Задания</button><button data-tab="team">Бригада</button><button data-tab="report">Отчёты</button><button data-tab="log">Журнал</button></nav>
+<main>
 <section id="shift">
-
-<h2>Управление сменой</h2>
-
-<button onclick="alert('Кнопка работает!')">Открыть смену</button>
-
+<div class="card"><h2>Смена <span id="shiftState" class="tag">Не открыта</span></h2><div class="grid"><div class="stat"><strong id="shiftClock">—</strong><small>Время смены</small></div><div class="stat"><strong id="jobCount">0</strong><small>Открыто заданий</small></div></div><p class="actions"><button class="gold" id="startShift">Открыть смену</button><button class="red" id="endShift">Закрыть смену</button></p><small id="shiftInfo"></small></div>
+<div class="card"><h2>Задания текущей смены</h2><div id="shiftJobs"></div><button class="gold" data-goto="jobs">Создать задание →</button></div>
 </section>
-
-<section id="team" style="display:none">
-
-<h2>Сотрудники</h2>
-
-<p>Раздел бригады работает!</p>
-
+<section id="jobs" hidden>
+<div class="card"><h2>Новое задание</h2><input id="jobName" placeholder="Название работ или номер заказа"><textarea id="jobNote" placeholder="Описание работы"></textarea><h3>Исполнители</h3><div id="chooseTeam"></div><button id="addJob" class="gold">Начать задание</button><p class="note">Можно запустить несколько заданий с одними исполнителями. Их время учитывается параллельно.</p></div>
+<div class="card"><h2>Управление заданиями</h2><div id="allJobs"></div></div>
 </section>
-
+<section id="team" hidden>
+<div class="card"><h2>Добавить сотрудника</h2><input id="personName" placeholder="Фамилия и имя"><select id="personRole"><option>Слесарь</option><option>Сварщик</option><option>Бригадир</option><option>Другая</option></select><input id="personExp" type="number" min="0" placeholder="Стаж, лет"><input id="personSkill" placeholder="Навыки и квалификация"><button class="gold" id="addPerson">Добавить</button></div>
+<div class="card"><h2>Сотрудники</h2><div id="persons"></div></div>
+</section>
+<section id="report" hidden><div class="card"><h2>Отчёт по текущей смене</h2><div id="summary"></div><h3>По сотрудникам</h3><div id="perPerson"></div><h3>По заданиям</h3><div id="perJob"></div><p class="note">Начисленное время суммируется по заданиям. Уникальное время не считает пересекающиеся интервалы дважды.</p><div class="actions"><button id="saveCsv">CSV-отчёт</button><button id="saveJson">Резервная копия JSON</button></div></div></section>
+<section id="log" hidden><div class="card"><h2>Журнал событий</h2><div id="events"></div></div></section>
+</main>
 <script>
-
-function show(id){
-
-document.getElementById('shift').style.display=id==='shift'?'block':'none';
-
-document.getElementById('team').style.display=id==='team'?'block':'none';
-
-}
-
+const KEY='brigadir-mobile-2', $=id=>document.getElementById(id), time=()=>Date.now();
+const fresh=()=>({people:[],shifts:[],jobs:[],events:[],current:null});
+let d;try{d={...fresh(),...JSON.parse(localStorage.getItem(KEY)||'{}')}}catch(e){d=fresh()}
+const id=()=>Math.random().toString(36).slice(2)+time().toString(36);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const date=t=>t?new Date(t).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
+const duration=ms=>{let m=Math.floor(Math.max(0,ms)/60000);return `${Math.floor(m/60)} ч ${String(m%60).padStart(2,'0')} мин`};
+const shift=()=>d.shifts.find(s=>s.id===d.current);
+const shiftJobs=()=>d.jobs.filter(j=>j.shiftId===d.current);
+const emp=eid=>d.people.find(p=>p.id===eid)?.name||'Сотрудник удалён';
+const notify=(kind,detail,jid=null,eid=null,t=time())=>d.events.unshift({id:id(),shiftId:d.current,kind,detail,jobId:jid,employeeId:eid,t});
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(d))}catch(e){alert('Не удалось сохранить данные. Экспортируйте резервную копию.')};render()};
+function closeInterval(a,t){if(a.open!==null){a.ranges.push([a.open,t]);a.open=null}}
+function resumeIfAble(j,a,t){if(j.state==='run'&&!a.personalPause&&!a.left&&a.open===null)a.open=t}
+function taskMillis(j,until=time()){let sum=0;for(const [start,end] of j.ranges)sum+=end-start;if(j.open!==null)sum+=until-j.open;return sum}
+function rangesOf(a,until=time()){return [...a.ranges,...(a.open!==null?[[a.open,until]]:[])]}
+function labor(a,until=time()){return rangesOf(a,until).reduce((s,[x,y])=>s+y-x,0)}
+function uniqueTime(ranges){ranges.sort((a,b)=>a[0]-b[0]);let result=0,end=-Infinity;for(const [a,b] of ranges){result+=Math.max(0,b-Math.max(a,end));end=Math.max(end,b)}return result}
+function openShift(){if(shift()?.state==='open')return;const t=time(),s={id:id(),from:t,to:null,state:'open'};d.shifts.push(s);d.current=s.id;notify('Смена открыта',date(t),null,null,t);save()}
+function endShift(){const s=shift();if(!s||s.state!=='open')return;if(!confirm('Закрыть смену? Все незавершённые задания будут автоматически завершены.'))return;const t=time();shiftJobs().filter(j=>j.state!=='done').forEach(j=>finishJob(j,t,true));s.to=t;s.state='closed';notify('Смена закрыта',date(t),null,null,t);save()}
+function finishJob(j,t,auto=false){if(j.state==='done')return;if(j.open!==null){j.ranges.push([j.open,t]);j.open=null}for(const a of j.members){closeInterval(a,t);a.left=true}j.state='done';j.to=t;notify(auto?'Закрытие со сменой':'Задание завершено',j.title,j.id,null,t)}
+function addJob(){if(shift()?.state!=='open')return alert('Сначала откройте смену');const title=$('jobName').value.trim();if(!title)return alert('Введите название');let ids=[...document.querySelectorAll('.worker:checked')].map(c=>c.value);if(!ids.length)return alert('Выберите хотя бы одного исполнителя');const t=time();const j={id:id(),shiftId:d.current,title,note:$('jobNote').value.trim(),created:t,to:null,state:'run',ranges:[],open:t,members:ids.map(employeeId=>({id:id(),employeeId,from:t,left:false,personalPause:false,ranges:[],open:t}))};d.jobs.push(j);notify('Задание создано',title,j.id,null,t);$('jobName').value='';$('jobNote').value='';save()}
+function jobAction(jid,action){const j=d.jobs.find(x=>x.id===jid);if(!j||j.state==='done'||shift()?.state!=='open')return;const t=time();if(action==='pause'&&j.state==='run'){j.ranges.push([j.open,t]);j.open=null;j.state='pause';j.members.forEach(a=>closeInterval(a,t));notify('Пауза задания',j.title,j.id,null,t)}else if(action==='resume'&&j.state==='pause'){j.open=t;j.state='run';j.members.forEach(a=>resumeIfAble(j,a,t));notify('Задание продолжено',j.title,j.id,null,t)}else if(action==='finish'){if(!confirm('Завершить задание «'+j.title+'»?'))return;finishJob(j,t)}save()}
+function workerAction(jid,aid,action){const j=d.jobs.find(x=>x.id===jid),a=j?.members.find(x=>x.id===aid);if(!a||a.left||j.state==='done'||shift()?.state!=='open')return;const t=time();if(action==='pause'){a.personalPause=true;closeInterval(a,t)}else if(action==='resume'){a.personalPause=false;resumeIfAble(j,a,t)}else if(action==='leave'){closeInterval(a,t);a.left=true}notify('Участие: '+action,emp(a.employeeId)+' / '+j.title,j.id,a.employeeId,t);save()}
+function join(jid){const j=d.jobs.find(x=>x.id===jid);if(!j||j.state==='done'||shift()?.state!=='open')return;const available=d.people.filter(p=>!j.members.some(a=>a.employeeId===p.id&&!a.left));if(!available.length)return alert('Все сотрудники уже назначены');let text=available.map((p,i)=>(i+1)+'. '+p.name).join('\n');let n=Number(prompt('Номер сотрудника:\n'+text));if(!Number.isInteger(n)||n<1||n>available.length)return;const t=time(),a={id:id(),employeeId:available[n-1].id,from:t,left:false,personalPause:false,ranges:[],open:j.state==='run'?t:null};j.members.push(a);notify('Исполнитель добавлен',emp(a.employeeId)+' / '+j.title,j.id,a.employeeId,t);save()}
+function addPerson(){const name=$('personName').value.trim();if(!name)return alert('Введите имя');const p={id:id(),name,role:$('personRole').value,exp:$('personExp').value||'0',skills:$('personSkill').value.trim()};d.people.push(p);notify('Добавлен сотрудник',name);$('personName').value='';$('personExp').value='';$('personSkill').value='';save()}
+function jobsHtml(extended=false){let jobs=shiftJobs();return jobs.length?jobs.map(j=>`<article><div class="row between"><b>${esc(j.title)}</b><span class="tag">${{run:'В работе',pause:'Пауза',done:'Завершено'}[j.state]}</span></div><p class="muted">${esc(j.note||'Без описания')}</p><p>Время задания: <span class="clock" data-jobclock="${j.id}">${duration(taskMillis(j))}</span></p><p class="muted">${j.members.map(a=>esc(emp(a.employeeId))).join(', ')}</p>${j.state!=='done'?`<div class="actions">${j.state==='run'?`<button data-job="${j.id}" data-action="pause">Пауза</button>`:`<button data-job="${j.id}" data-action="resume">Продолжить</button>`}<button data-job="${j.id}" data-action="finish" class="red">Завершить</button><button data-join="${j.id}">+ Участник</button></div>`:''}${extended?`<h3>Исполнители</h3>${j.members.map(a=>`<div class="row" style="margin:8px 0"><span>${esc(emp(a.employeeId))}: <span data-memberclock="${a.id}">${duration(labor(a))}</span>${a.left?' · вышел':a.personalPause?' · личная пауза':''}</span>${!a.left&&j.state!=='done'?`<div class="actions">${a.personalPause?`<button data-worker="${j.id}" data-aid="${a.id}" data-waction="resume">Вернуть</button>`:`<button data-worker="${j.id}" data-aid="${a.id}" data-waction="pause">Личная пауза</button>`}<button data-worker="${j.id}" data-aid="${a.id}" data-waction="leave">Убрать</button></div>`:''}</div>`).join('')}`:''}</article>`).join(''):'<p class="muted">Заданий пока нет</p>'}
+function report(){const jobs=shiftJobs(),s=shift(),total=jobs.reduce((n,j)=>n+j.members.reduce((x,a)=>x+labor(a),0),0);$('summary').innerHTML=`<p>Смена: ${s?date(s.from)+' — '+date(s.to):'не выбрана'}</p><p>Заданий: <b>${jobs.length}</b>; трудозатраты: <b>${duration(total)}</b></p>`;$('perPerson').innerHTML=d.people.length?`<table><tr><th>Сотрудник</th><th>Начислено / уникально</th></tr>${d.people.map(p=>{const arr=jobs.flatMap(j=>j.members.filter(a=>a.employeeId===p.id)),ms=arr.reduce((n,a)=>n+labor(a),0),unique=uniqueTime(arr.flatMap(a=>rangesOf(a)));return `<tr><td>${esc(p.name)}</td><td>${duration(ms)} / ${duration(unique)}</td></tr>`}).join('')}</table>`:'<p class="muted">Нет сотрудников</p>';$('perJob').innerHTML=jobs.length?`<table><tr><th>Задание</th><th>Время / трудозатраты</th></tr>${jobs.map(j=>`<tr><td>${esc(j.title)}</td><td>${duration(taskMillis(j))} / ${duration(j.members.reduce((n,a)=>n+labor(a),0))}</td></tr>`).join('')}</table>`:'<p class="muted">Нет заданий</p>'}
+function render(){const s=shift(),open=s?.state==='open';$('shiftState').textContent=!s?'Не открыта':open?'Открыта':'Закрыта';$('shiftClock').textContent=s?duration((s.to||time())-s.from):'—';$('jobCount').textContent=shiftJobs().filter(j=>j.state!=='done').length;$('shiftInfo').textContent=s?'Начало: '+date(s.from)+(s.to?' · конец: '+date(s.to):''):'';$('startShift').disabled=!!open;$('endShift').disabled=!open;$('shiftJobs').innerHTML=jobsHtml();$('allJobs').innerHTML=jobsHtml(true);$('chooseTeam').innerHTML=d.people.length?d.people.map(p=>`<label class="check"><input class="worker" type="checkbox" value="${p.id}"><span>${esc(p.name)} — ${esc(p.role)}</span></label>`).join(''):'<p class="muted">Сначала добавьте сотрудников во вкладке «Бригада».</p>';$('persons').innerHTML=d.people.length?d.people.map(p=>`<article><b>${esc(p.name)}</b><p class="muted">${esc(p.role)} · стаж ${esc(p.exp)} лет${p.skills?' · '+esc(p.skills):''}</p></article>`).join(''):'<p class="muted">Сотрудников пока нет</p>';report();$('events').innerHTML=d.events.filter(e=>e.shiftId===d.current||!d.current).slice(0,100).map(e=>`<article><small>${date(e.t)}</small><br><b>${esc(e.kind)}</b><p>${esc(e.detail)}</p></article>`).join('')||'<p class="muted">Нет событий</p>'}
+function download(name,text,type){const url=URL.createObjectURL(new Blob([text],{type}));const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1500)}
+function exportCsv(){const rows=[['Задание','Исполнитель','Время задания мин','Трудозатраты мин']];shiftJobs().forEach(j=>j.members.forEach(a=>rows.push([j.title,emp(a.employeeId),Math.round(taskMillis(j)/60000),Math.round(labor(a)/60000)])));download('brigadir-report.csv','\ufeff'+rows.map(r=>r.map(x=>'"'+String(x).replace(/"/g,'""')+'"').join(';')).join('\r\n'),'text/csv;charset=utf-8')}
+$('startShift').onclick=openShift;$('endShift').onclick=endShift;$('addPerson').onclick=addPerson;$('addJob').onclick=addJob;$('saveCsv').onclick=exportCsv;$('saveJson').onclick=()=>download('brigadir-backup.json',JSON.stringify(d,null,2),'application/json');
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.tab){for(const x of document.querySelectorAll('nav button'))x.classList.toggle('sel',x===b);for(const x of document.querySelectorAll('main>section'))x.hidden=x.id!==b.dataset.tab}else if(b.dataset.goto){document.querySelector(`nav [data-tab="${b.dataset.goto}"]`).click()}else if(b.dataset.action){jobAction(b.dataset.job,b.dataset.action)}else if(b.dataset.join){join(b.dataset.join)}else if(b.dataset.waction){workerAction(b.dataset.worker,b.dataset.aid,b.dataset.waction)}});
+setInterval(()=>{const s=shift();if(s)$('shiftClock').textContent=duration((s.to||time())-s.from);for(const j of shiftJobs()){for(const el of document.querySelectorAll(`[data-jobclock="${j.id}"]`))el.textContent=duration(taskMillis(j));for(const a of j.members)for(const el of document.querySelectorAll(`[data-memberclock="${a.id}"]`))el.textContent=duration(labor(a))}if(!$('report').hidden)report()},5000);
+render();
 </script>
-
 </body>
-
 </html>
