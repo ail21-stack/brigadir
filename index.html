@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+
+<html lang="ru">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Бригадир</title>
+
+<style>
+
+body{background:#101923;color:white;font-family:Arial;padding:20px}
+
+button{background:#f3b44d;border:0;border-radius:10px;padding:15px;margin:5px;font-size:16px}
+
+section{background:#1d2b3a;padding:20px;border-radius:12px;margin-top:20px}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>БРИГАДИР 2.0</h1>
+
+<p>Проверка приложения</p>
+
+<button onclick="show('shift')">Смена</button>
+
+<button onclick="show('team')">Бригада</button>
+
+<section id="shift">
+
+<h2>Управление сменой</h2>
+
+<button onclick="alert('Кнопка работает!')">Открыть смену</button>
+
+</section>
+
+<section id="team" style="display:none">
+
+<h2>Сотрудники</h2>
+
+<p>Раздел бригады работает!</p>
+
+</section>
+
+<script>
+
+function show(id){
+
+document.getElementById('shift').style.display=id==='shift'?'block':'none';
+
+document.getElementById('team').style.display=id==='team'?'block':'none';
+
+}
+
+</script>
+
+</body>
+
+</html>
